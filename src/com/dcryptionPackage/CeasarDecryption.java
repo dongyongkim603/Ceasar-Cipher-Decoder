@@ -1,29 +1,26 @@
 package com.dcryptionPackage;
 
+import java.util.ArrayList;
+
 public class CeasarDecryption {
 
 	// instance variables
 	private String ciphertext;
-	private String[] plaintext;
-	private String key;
-	private static final char[] ALPHABET = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-			'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+	private ArrayList<String> plaintext = new ArrayList<>();
+	private int key = -1;
 
 	// public constructors
 	public CeasarDecryption() {
 		this(null);
-		this.plaintext = new String[26];
 	}
 
 	public CeasarDecryption(String cipher) {
-		this.ciphertext = cipher;
-		this.plaintext = new String[26];
+		this(cipher, -1);
 	}
 
-	public CeasarDecryption(String cipher, String key) {
-		this(null);
+	public CeasarDecryption(String cipher, int key) {
 		this.ciphertext = cipher;
-		this.plaintext = new String[26];
+		this.key = key;
 	}
 
 //-----------------getters and setters--------------------
@@ -36,30 +33,60 @@ public class CeasarDecryption {
 		this.ciphertext = ciphertext;
 	}
 
-	public String[] getPlaintext() {
+	public ArrayList<String> getPlaintext() {
 		return plaintext;
+	}
+	
+	public void setKey(int key) {
+		this.key = key;
+	}
+	
+	public int getKey() {
+		return this.key;
 	}
 
 //--------------------------------------------------------
 
-	public int[] permutateLetters() {
-		StringBuilder text = new StringBuilder();
+	/**
+	 * takes in the ciphertext string and casts the chars of the string into a int
+	 * array.
+	 * 
+	 * @return an int array of the ascii values of the char that make up the
+	 *         ciphertext string.
+	 */
+	public int[] asciiLetters() {
 		int[] letterNumbers = new int[ciphertext.length()];
-		for(int i = 0; i < ciphertext.length(); i++) {
+		for (int i = 0; i < ciphertext.length(); i++) {
 			char letterAt = ciphertext.charAt(i);
-			letterNumbers[i] = (int)letterAt;
-			System.out.println((int)letterAt);
+			letterNumbers[i] = (int) letterAt;
 		}
-		
-		
-//		for(int i = 0; i < charArray.length; i++) {
-//			char letter = charArray[i];
-//			for(int j = 0; j < 25; j++) {
-//				if(ALPHABET[j] == letter) {
-//					letterNumbers[i] = j;
-//				}
-//			}
-//		}
 		return letterNumbers;
+	}
+
+	/**
+	 * takes in an int array and shifts letters according to key or will try a brute force of all 26 possible permutations
+	 * @param asciiArray an array of integers that are a characters converted to ascii.
+	 */
+	public void shiftLetters(int[] asciiArray) {
+		for (int i = 26; i > 0; i--) {
+			StringBuilder text = new StringBuilder();
+			for (int j = 0; j < asciiArray.length; j++) {
+				if (this.key != -1) {
+					char offset = (char) ((asciiArray[j] + this.key - 65) % 26 + 65);
+					text.append(offset);
+				} else {
+					if (Character.isUpperCase(ciphertext.charAt(j))) {
+						char offset = (char) ((asciiArray[j] + i - 65) % 26 + 65);
+						text.append(offset);
+					} else {
+						char offset = (char) ((asciiArray[j] + i - 97) % 26 + 97);
+						text.append(offset);
+					}
+				}
+			}
+			String pText = text.toString();
+			System.out.println("With a key of " + i + " the plaintext is: " + pText);
+			this.plaintext.add(pText);
+		}
 	}
 }
