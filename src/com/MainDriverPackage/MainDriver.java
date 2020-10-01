@@ -7,7 +7,7 @@ public class MainDriver {
 
 	// main driver static class variables
 	private static boolean exit = false;
-	private static Scanner scanner = new Scanner(System.in);
+	private static Scanner scanner;
 	private static String input;
 	private static int key;
 	private static int options;
@@ -29,6 +29,7 @@ public class MainDriver {
 	 */
 	public static void menu() {
 		while (exit == false) {
+			scanner = new Scanner(System.in);
 			System.out.println(
 					"MAIN MENU: \n1) to enter ciphertext with no key \n2) to enter ciphertext with a key \nany other key) to exit");
 			try {
@@ -44,12 +45,14 @@ public class MainDriver {
 				default:
 					exit = true;
 					System.out.println("goodbye...");
+					scanner.close();
 				}
 			} catch (Exception e) {
 				System.out.println("goodbye");
 				exit = true;
+				scanner.close();
 			}
-			scanner.close();
+			
 		}
 	}
 
@@ -64,7 +67,8 @@ public class MainDriver {
 		ascii = cipher.asciiLetters();
 		cipher.shiftLetters(ascii);
 		System.out.println("printing results to 'Results.txt'...");
-		writer.writeResults(cipher.getPlaintext());
+		writer.writeResults(cipher.getPlaintext());		
+		System.out.println("finished\n");
 	}
 
 	/**
@@ -82,6 +86,7 @@ public class MainDriver {
 		cipher.shiftLetters(ascii);
 		System.out.println("printing results to 'Results.txt'...");
 		writer.writeResults(cipher.getPlaintext());
+		System.out.println("finished\n");
 	}
 
 }// end of driver class
